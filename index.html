@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Маршрут по России: Северо-Запад + Соловки</title>
+    <title>Автомобильный маршрут: Северо-Запад + Соловки</title>
     <!-- Подключаем Яндекс Карты API -->
-    <script src="https://api-maps.yandex.ru/2.1/?apikey=6fd0f5ac-3b42-46cd-9fec-0fdc11dc5242&lang=ru_RU" type="text/javascript"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=ваш_ключ_api&lang=ru_RU" type="text/javascript"></script>
     <style>
         * {
             margin: 0;
@@ -115,6 +115,16 @@
             margin-bottom: 18px;
             border-bottom: 2px solid #c3d9ec;
             padding-bottom: 8px;
+        }
+        .car-badge {
+            background: #ffd966;
+            color: #1e4a6b;
+            padding: 5px 15px;
+            border-radius: 30px;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-left: 10px;
         }
 
         .route-selector {
@@ -304,13 +314,14 @@
             color: #0d3b58;
             margin-bottom: 6px;
         }
-        .leg-transport {
-            background: #eef2f7;
+        .leg-car {
+            background: #ffd966;
             padding: 4px 12px;
             border-radius: 30px;
             font-size: 0.85rem;
             color: #1e4a6b;
             display: inline-block;
+            font-weight: 600;
         }
         .leg-details {
             display: flex;
@@ -318,6 +329,13 @@
             margin-top: 6px;
             color: #365f7e;
             font-size: 0.9rem;
+        }
+        .road-type {
+            font-size: 0.85rem;
+            color: #4f6f8f;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px dashed #cbd5e1;
         }
 
         .info-note {
@@ -341,8 +359,8 @@
 </head>
 <body>
     <div class="header">
-        <h1>Путешествие по <span>Северо-Западу России</span></h1>
-        <p>25 исторических точек · Кольцевой маршрут из Санкт-Петербурга</p>
+        <h1>Автомобильное путешествие по <span>Северо-Западу России</span></h1>
+        <p>25 исторических точек · Кольцевой автопробег из Санкт-Петербурга</p>
     </div>
 
     <div class="app-container">
@@ -358,7 +376,7 @@
             </div>
 
             <div class="planner">
-                <h3>🗺️ Планировщик маршрута</h3>
+                <h3>🚗 Планировщик автопутешествия <span class="car-badge">только автомобиль</span></h3>
                 
                 <div class="route-selector">
                     <div class="fixed-point">
@@ -380,32 +398,32 @@
                     </div>
                 </div>
 
-                <button class="calculate-btn" id="calculateBtn">Построить маршрут</button>
+                <button class="calculate-btn" id="calculateBtn">Построить автомобильный маршрут</button>
 
                 <div class="route-details" id="routeDetails">
                     <div class="total-info">
                         <div class="total-item">
-                            <div class="label">Общее время</div>
+                            <div class="label">Время в пути</div>
                             <div class="value" id="totalTime">0</div>
                             <div class="unit">часов</div>
                         </div>
                         <div class="total-item">
-                            <div class="label">Расстояние</div>
+                            <div class="label">Пробег</div>
                             <div class="value" id="totalDist">0</div>
                             <div class="unit">км</div>
                         </div>
                     </div>
                     <div id="legsContainer" class="legs-list">
                         <div style="text-align: center; color: #5a7794; padding: 15px;">
-                            Нажмите "Построить маршрут", чтобы увидеть детали
+                            Нажмите "Построить автомобильный маршрут", чтобы увидеть детали
                         </div>
                     </div>
                     <div class="info-note" id="apiNote" style="display: none;">
-                        🗺️ Маршрут на карте построен Яндексом, время рассчитано приблизительно
+                        🗺️ Маршрут на карте построен Яндексом, расчёт для автомобиля
                     </div>
                 </div>
             </div>
-            <footer>Время указано только на перемещение · оптимальный транспорт для каждого участка</footer>
+            <footer>Время указано только на перемещение · средняя скорость 60 км/ч</footer>
         </div>
     </div>
 
@@ -413,7 +431,7 @@
         (function() {
             // --- ВСЕ ТОЧКИ МАРШРУТА (25 точек, включая Соловки и Вознесенье) ---
             const points = [
-                { id:0, name:"Санкт-Петербург", lat:59.938784, lon:30.314997, desc:"Стартовая и конечная точка маршрута. Отсюда начинается и сюда возвращается путешествие по древним русским городам.", group:"start" },
+                { id:0, name:"Санкт-Петербург", lat:59.938784, lon:30.314997, desc:"Стартовая и конечная точка маршрута. Отсюда начинается и сюда возвращается автомобильное путешествие по древним русским городам.", group:"start" },
                 { id:1, name:"Ивангород", lat:59.376490, lon:28.219712, desc:"Основан Иоанном III Великим как оборонительная крепость от Ливонской конфедерации. Сейчас там находится музей 'Ивангородская крепость'.", group:"northwest" },
                 { id:2, name:"Гдов", lat:58.744398, lon:27.819594, desc:"Основан в 1431 году при князе Дмитрии Александровиче Ростовском. На реке Гдовке была заложена крепость, которую можно осмотреть.", group:"northwest" },
                 { id:3, name:"Трутневские пещеры", lat:58.618070, lon:27.940687, desc:"Природная и историческая жемчужина псковской земли, древняя обитель монахов.", group:"northwest" },
@@ -430,10 +448,10 @@
                 { id:15, name:"Вологда", lat:59.220501, lon:39.891523, desc:"Софийский собор, Вологодский кремль (Архиерейский двор), Музей кружева, Спасо-Прилуцкий монастырь, Дом Петра I, Церковь Иоанна Предтечи, Дом Засецких, Дом с лилиями, Музей «Мир забытых вещей», Памятник букве «О» и множество купеческих особняков.", group:"northwest" },
                 { id:16, name:"Кириллов", lat:59.859059, lon:38.374942, desc:"Огромный музей Кирилло-Белозерского монастыря.", group:"northwest" },
                 { id:17, name:"Белозерск", lat:60.032074, lon:37.792456, desc:"Белозерский Кремль, музей Белого озера, экспозиция «Белоозёрск исторический».", group:"northwest" },
-                { id:18, name:"Вознесенье", lat:61.010332, lon:35.482466, desc:"Посёлок Вознесенье — важная паромная переправа через реку Свирь. Связывает Ленинградскую область с Карелией. Здесь можно пересечь Свирь на пароме и продолжить путь на север.", group:"northwest" },
+                { id:18, name:"Вознесенье", lat:61.010332, lon:35.482466, desc:"Посёлок Вознесенье — важная паромная переправа через реку Свирь. Связывает Ленинградскую область с Карелией. Здесь можно пересечь Свирь на пароме (автомобильный паром) и продолжить путь на север.", group:"northwest" },
                 { id:19, name:"Петрозаводск", lat:61.785021, lon:34.346878, desc:"Рекомендуется посмотреть исторический центр, национальный музей Карелии, собор Александра Невского, набережную Онежского озера.", group:"northwest" },
-                { id:20, name:"Кижи", lat:62.082475, lon:35.207069, desc:"Кижи — всемирно известный музей-заповедник деревянного зодчества под открытым небом. Архитектурное сердце — 22-главый Преображенский собор (1714 г.), срубленный без единого гвоздя. Десятки памятников крестьянской и культовой архитектуры.", group:"northwest" },
-                { id:21, name:"Соловецкий монастырь", lat:65.026802, lon:35.709128, desc:"Соловецкий монастырь — уникальный ансамбль XVI века, построенный из огромных валунов и служивший мощной крепостью на севере России. На протяжении столетий он был крупнейшим духовным, хозяйственным и оборонным центром, а также местом трагических событий в годы советских репрессий.", group:"northwest" },
+                { id:20, name:"Кижи", lat:62.082475, lon:35.207069, desc:"Кижи — всемирно известный музей-заповедник деревянного зодчества под открытым небом. Архитектурное сердце — 22-главый Преображенский собор (1714 г.), срубленный без единого гвоздя. Десятки памятников крестьянской и культовой архитектуры. Добраться можно на автомобильном пароме из Петрозаводска.", group:"northwest" },
+                { id:21, name:"Соловецкий монастырь", lat:65.026802, lon:35.709128, desc:"Соловецкий монастырь — уникальный ансамбль XVI века, построенный из огромных валунов и служивший мощной крепостью на севере России. На протяжении столетий он был крупнейшим духовным, хозяйственным и оборонным центром, а также местом трагических событий в годы советских репрессий. Автомобиль + паром из Кеми.", group:"northwest" },
                 { id:22, name:"Лодейное Поле", lat:60.734547, lon:33.545886, desc:"Домик Петра, центр ремесел, краеведческий музей.", group:"northwest" },
                 { id:23, name:"Старая Ладога", lat:59.998936, lon:32.295800, desc:"Древняя крепость в устье реки Волхов — первая столица Руси.", group:"northwest" },
                 { id:24, name:"Шлиссельбург", lat:59.944959, lon:31.034754, desc:"Музей-крепость «Орешек», а также историческая застройка в центре города.", group:"northwest" }
@@ -478,13 +496,19 @@
                 checkboxes.forEach(cb => cb.checked = !allChecked);
             });
 
-            // Рекомендация транспорта
-            function recommendTransport(distance) {
-                if (distance < 50) return { mode: '🚗 Такси/Авто', icon: '🚗' };
-                if (distance < 150) return { mode: '🚆 Электричка', icon: '🚆' };
-                if (distance < 300) return { mode: '🚌 Автобус', icon: '🚌' };
-                if (distance < 600) return { mode: '🚂 Поезд', icon: '🚂' };
-                return { mode: '✈️ Самолёт', icon: '✈️' };
+            // Определение типа дороги (условно, на основе расстояния и широты)
+            function getRoadType(distance, fromLat, toLat) {
+                // Северные регионы (Карелия, Соловки) - больше грунтовок
+                if (fromLat > 62 || toLat > 62) {
+                    if (distance < 50) return "грунтовая дорога, возможны проблемы в непогоду";
+                    if (distance < 100) return "региональная трасса, частично грунт";
+                    return "федеральная трасса, хорошее покрытие";
+                }
+                
+                if (distance < 30) return "городские дороги";
+                if (distance < 80) return "региональная трасса, асфальт";
+                if (distance < 200) return "федеральная трасса, хороший асфальт";
+                return "магистраль, отличное покрытие";
             }
 
             // Расчёт расстояния по прямой (Гаверсинус)
@@ -499,8 +523,8 @@
                 return R * c;
             }
 
-            // Расчёт маршрута (всегда по прямой, чтобы не зависеть от API)
-            function calculateRoute(routePoints) {
+            // Расчёт автомобильного маршрута
+            function calculateCarRoute(routePoints) {
                 const legs = [];
                 let totalDistance = 0;
                 
@@ -511,45 +535,56 @@
                     // Расстояние по прямой
                     const directDistance = haversineDistance(from.lat, from.lon, to.lat, to.lon);
                     
-                    // Коэффициент извилистости дорог
-                    // Для северных регионов (выше 62 параллели) дороги более извилистые
+                    // Коэффициент извилистости для авто
+                    // На севере дороги более извилистые, объезды озёр и болот
                     const isNorthern = (from.lat > 62 || to.lat > 62);
-                    const roadFactor = isNorthern ? 1.6 : 1.3;
+                    const isKarelia = (from.lat > 60 && from.lat < 65) || (to.lat > 60 && to.lat < 65);
+                    
+                    let roadFactor = 1.3; // базовый
+                    if (isNorthern) roadFactor = 1.7; // север (Соловки, Кижи)
+                    else if (isKarelia) roadFactor = 1.5; // Карелия
                     
                     const roadDistance = directDistance * roadFactor;
                     totalDistance += roadDistance;
                     
-                    // Средняя скорость 50 км/ч (с учётом остановок)
-                    const timeHours = roadDistance / 50;
+                    // Средняя скорость для авто: 60 км/ч (с учётом дорожных условий)
+                    // На севере скорость ниже
+                    let avgSpeed = 60;
+                    if (isNorthern) avgSpeed = 45;
+                    else if (isKarelia) avgSpeed = 50;
                     
-                    const transport = recommendTransport(roadDistance);
+                    const timeHours = roadDistance / avgSpeed;
+                    
+                    const roadType = getRoadType(roadDistance, from.lat, to.lat);
                     
                     legs.push({
                         from: from.name,
                         to: to.name,
                         distance: Math.round(roadDistance) + ' км',
                         time: Math.round(timeHours * 10) / 10 + ' ч',
-                        transport: transport
+                        roadType: roadType,
+                        avgSpeed: avgSpeed
                     });
                 }
                 
                 return { legs, totalDistance };
             }
 
-            // Отрисовка маршрута на карте через Яндекс (всегда пытаемся)
+            // Отрисовка маршрута на карте через Яндекс
             function drawYandexRoute(routePoints) {
                 if (!window.ymaps || !map) return false;
                 
                 try {
-                    // Удаляем предыдущий маршрут
                     if (currentRoute) {
                         map.geoObjects.remove(currentRoute);
                     }
                     
-                    // Создаём мультимаршрут
                     const multiRoute = new ymaps.multiRouter.MultiRoute({
                         referencePoints: routePoints.map(p => [p.lat, p.lon]),
-                        params: { results: 1 }
+                        params: { 
+                            results: 1,
+                            routingMode: 'auto' // именно автомобильный режим
+                        }
                     }, {
                         boundsAutoApply: true,
                         wayPointVisible: true,
@@ -560,7 +595,6 @@
                     map.geoObjects.add(multiRoute);
                     currentRoute = multiRoute;
                     
-                    // Не ждём загрузки, просто возвращаем true
                     return true;
                 } catch (e) {
                     console.warn('Не удалось построить маршрут Яндекса:', e);
@@ -573,24 +607,22 @@
                 const btn = this;
                 btn.disabled = true;
                 
-                // Собираем выбранные промежуточные точки
                 const selectedIds = Array.from(document.querySelectorAll('#checklist input:checked'))
                     .map(cb => parseInt(cb.value))
                     .sort((a, b) => a - b);
 
-                // Формируем полный маршрут: СПб -> выбранные точки -> СПб
                 const routePointIds = [0, ...selectedIds, 0];
                 const routePoints_data = routePointIds.map(id => points.find(p => p.id === id));
                 
-                if (routePoints_data.length < 3) { // СПб + хотя бы одна точка + СПб
-                    alert('Выберите хотя бы одну промежуточную точку');
+                if (routePoints_data.length < 3) {
+                    alert('Выберите хотя бы одну промежуточную точку для автопутешествия');
                     btn.disabled = false;
                     return;
                 }
 
-                document.getElementById('legsContainer').innerHTML = '<div style="text-align:center; padding:20px;">⏳ Построение маршрута...</div>';
+                document.getElementById('legsContainer').innerHTML = '<div style="text-align:center; padding:20px;">⏳ Построение автомобильного маршрута...</div>';
 
-                // 1. ВСЕГДА рисуем маршрут через Яндекс (если возможно)
+                // Рисуем маршрут через Яндекс
                 const yandexDrawn = drawYandexRoute(routePoints_data);
                 
                 if (yandexDrawn) {
@@ -599,11 +631,11 @@
                     document.getElementById('apiNote').style.display = 'none';
                 }
                 
-                // 2. ВСЕГДА считаем время и расстояние по прямой (независимо от API)
+                // Считаем время и расстояние для авто
                 setTimeout(() => {
-                    const result = calculateRoute(routePoints_data);
+                    const result = calculateCarRoute(routePoints_data);
                     
-                    document.getElementById('totalTime').innerText = Math.round(result.totalDistance / 50 * 10) / 10;
+                    document.getElementById('totalTime').innerText = Math.round(result.totalDistance / 60 * 10) / 10;
                     document.getElementById('totalDist').innerText = Math.round(result.totalDistance);
 
                     let legsHtml = '';
@@ -612,11 +644,14 @@
                             <div class="leg-item">
                                 <div class="leg-header">
                                     <span>${leg.from} → ${leg.to}</span>
-                                    <span class="leg-transport">${leg.transport.icon} ${leg.transport.mode}</span>
+                                    <span class="leg-car">🚗 автомобиль</span>
                                 </div>
                                 <div class="leg-details">
                                     <span>📏 ${leg.distance}</span>
                                     <span>⏱️ ${leg.time}</span>
+                                </div>
+                                <div class="road-type">
+                                    🛣️ ${leg.roadType} (средняя скорость ${leg.avgSpeed} км/ч)
                                 </div>
                             </div>
                         `;
@@ -624,7 +659,7 @@
 
                     document.getElementById('legsContainer').innerHTML = legsHtml;
                     btn.disabled = false;
-                }, 100); // Небольшая задержка для отрисовки карты
+                }, 100);
             });
 
             // Инициализация карты
@@ -644,7 +679,7 @@
                     } else if (p.id === 21) { // Соловки
                         preset = 'islands#violetIcon';
                     } else if (p.id === 18) { // Вознесенье
-                        preset = 'islands#blueIcon'; // Можно сделать особым, но пока синий
+                        preset = 'islands#blueIcon';
                     } else {
                         preset = 'islands#greenIcon';
                     }

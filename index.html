@@ -80,7 +80,6 @@
             transform: translateX(100%);
         }
 
-        /* Ненавязчивая стрелка для сворачивания */
         .sidebar-toggle {
             position: absolute;
             left: -40px;
@@ -448,7 +447,6 @@
         </div>
 
         <div class="sidebar" id="sidebar">
-            <!-- Стрелка для сворачивания прямо на панели -->
             <div class="sidebar-toggle" id="sidebarToggle">▶</div>
             
             <div class="info-card" id="infoCard">
@@ -468,7 +466,7 @@
                     
                     <div class="fixed-point">
                         <span class="return-badge">🏁 ФИНИШ</span>
-                        <span class="point-text">Санкт-Петербург (возврат)</span>
+                        <span class="point-text">Санкт-Петербург (обязательный возврат)</span>
                     </div>
 
                     <div class="waypoints-header">
@@ -501,7 +499,7 @@
                         </div>
                     </div>
                     <div class="info-note" id="apiNote" style="display: none;">
-                        🗺️ Маршрут на карте построен Яндексом, расчёт для автомобиля + водные переправы
+                        🗺️ Маршрут на карте построен Яндексом
                     </div>
                 </div>
             </div>
@@ -511,9 +509,9 @@
 
     <script>
         (function() {
-            // --- ВСЕ ТОЧКИ МАРШРУТА (25 точек, включая Соловки и Вознесенье) ---
+            // --- ВСЕ ТОЧКИ МАРШРУТА (25 точек) ---
             const points = [
-                { id:0, name:"Санкт-Петербург", lat:59.938784, lon:30.314997, desc:"Стартовая и конечная точка маршрута. Отсюда начинается и сюда возвращается автомобильное путешествие по древним русским городам.", group:"start" },
+                { id:0, name:"Санкт-Петербург", lat:59.938784, lon:30.314997, desc:"Стартовая и конечная точка маршрута. Отсюда начинается и сюда обязательно возвращается автомобильное путешествие.", group:"start" },
                 { id:1, name:"Ивангород", lat:59.376490, lon:28.219712, desc:"Основан Иоанном III Великим как оборонительная крепость от Ливонской конфедерации. Сейчас там находится музей 'Ивангородская крепость'.", group:"northwest" },
                 { id:2, name:"Гдов", lat:58.744398, lon:27.819594, desc:"Основан в 1431 году при князе Дмитрии Александровиче Ростовском. На реке Гдовке была заложена крепость, которую можно осмотреть.", group:"northwest" },
                 { id:3, name:"Трутневские пещеры", lat:58.618070, lon:27.940687, desc:"Природная и историческая жемчужина псковской земли, древняя обитель монахов.", group:"northwest" },
@@ -533,7 +531,7 @@
                 { id:18, name:"Вознесенье", lat:61.010332, lon:35.482466, desc:"Посёлок Вознесенье — важная паромная переправа через реку Свирь. Связывает Ленинградскую область с Карелией. Здесь можно пересечь Свирь на автомобильном пароме и продолжить путь на север.", group:"northwest" },
                 { id:19, name:"Петрозаводск", lat:61.785021, lon:34.346878, desc:"Рекомендуется посмотреть исторический центр, национальный музей Карелии, собор Александра Невского, набережную Онежского озера. Отсюда можно отправиться на пароме на остров Кижи.", group:"northwest" },
                 { id:20, name:"Кижи", lat:62.082475, lon:35.207069, desc:"Кижи — всемирно известный музей-заповедник деревянного зодчества под открытым небом на острове в Онежском озере. Архитектурное сердце — 22-главый Преображенский собор (1714 г.), срубленный без единого гвоздя. Добраться можно только на пароме или метеоре из Петрозаводска.", group:"island" },
-                { id:21, name:"Соловецкий монастырь", lat:65.026802, lon:35.709128, desc:"Соловецкий монастырь — уникальный ансамбль XVI века на Соловецких островах, построенный из огромных валунов и служивший мощной крепостью на севере России. На протяжении столетий он был крупнейшим духовным, хозяйственным и оборонным центром, а также местом трагических событий в годы советских репрессий. Добраться можно на автомобильном пароме из Кеми (оставляете машину и плывёте).", group:"island" },
+                { id:21, name:"Соловецкий монастырь", lat:65.026802, lon:35.709128, desc:"Соловецкий монастырь — уникальный ансамбль XVI века на Соловецких островах, построенный из огромных валунов и служивший мощной крепостью на севере России. Добраться можно на автомобильном пароме из Кеми (оставляете машину и плывёте).", group:"island" },
                 { id:22, name:"Лодейное Поле", lat:60.734547, lon:33.545886, desc:"Домик Петра, центр ремесел, краеведческий музей.", group:"northwest" },
                 { id:23, name:"Старая Ладога", lat:59.998936, lon:32.295800, desc:"Древняя крепость в устье реки Волхов — первая столица Руси.", group:"northwest" },
                 { id:24, name:"Шлиссельбург", lat:59.944959, lon:31.034754, desc:"Музей-крепость «Орешек», а также историческая застройка в центре города.", group:"northwest" }
@@ -543,7 +541,7 @@
             let currentRoute = null;
             let sidebarCollapsed = false;
 
-            // Функция сворачивания/разворачивания панели
+            // Функция сворачивания панели
             const sidebar = document.getElementById('sidebar');
             const toggleBtn = document.getElementById('sidebarToggle');
             
@@ -552,19 +550,18 @@
                 
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
-                    toggleBtn.innerHTML = '◀'; // Стрелка вправо (показывает, что панель слева)
+                    toggleBtn.innerHTML = '◀';
                 } else {
                     sidebar.classList.remove('collapsed');
-                    toggleBtn.innerHTML = '▶'; // Стрелка влево (показывает, что можно свернуть)
+                    toggleBtn.innerHTML = '▶';
                 }
                 
-                // Перерисовываем карту после анимации
                 setTimeout(() => {
                     if (map) map.container.fitToViewport();
                 }, 300);
             });
 
-            // Функция обновления информации о точке (ПОЛНЫЙ ТЕКСТ)
+            // Функция обновления информации о точке
             function updateInfoPanel(point) {
                 document.getElementById('pointName').innerText = point.name;
                 document.getElementById('pointCoords').innerText = point.lat.toFixed(4) + ', ' + point.lon.toFixed(4);
@@ -645,6 +642,7 @@
                     const from = routePoints[i];
                     const to = routePoints[i+1];
                     
+                    // Проверка на водные участки (Кижи или Соловки)
                     const isWaterSegment = (from.id === 20 || from.id === 21 || to.id === 20 || to.id === 21);
                     
                     const directDistance = haversineDistance(from.lat, from.lon, to.lat, to.lon);
@@ -653,10 +651,11 @@
                     
                     if (isWaterSegment) {
                         roadDistance = directDistance;
-                        avgSpeed = 25;
+                        avgSpeed = 25; // скорость парома
                         timeHours = roadDistance / avgSpeed;
                         roadType = "водная переправа (паром/катер)";
                     } else {
+                        // Коэффициент извилистости для сухопутных участков
                         const isNorthern = (from.lat > 62 || to.lat > 62);
                         const isKarelia = (from.lat > 60 && from.lat < 65) || (to.lat > 60 && to.lat < 65);
                         
@@ -728,21 +727,35 @@
                 const btn = this;
                 btn.disabled = true;
                 
+                // Получаем выбранные точки
                 const selectedIds = Array.from(document.querySelectorAll('#checklist input:checked'))
                     .map(cb => parseInt(cb.value))
                     .sort((a, b) => a - b);
 
+                // ВАЖНО: Формируем маршрут: СПб (id:0) -> выбранные точки в порядке возрастания -> СПб (id:0)
                 const routePointIds = [0, ...selectedIds, 0];
-                const routePoints_data = routePointIds.map(id => points.find(p => p.id === id));
                 
+                // Получаем данные точек
+                const routePoints_data = routePointIds.map(id => {
+                    const point = points.find(p => p.id === id);
+                    if (!point) {
+                        console.error(`Точка с id ${id} не найдена`);
+                    }
+                    return point;
+                }).filter(p => p !== undefined);
+                
+                // Проверяем, что есть хотя бы одна промежуточная точка
                 if (routePoints_data.length < 3) {
                     alert('Выберите хотя бы одну промежуточную точку для автопутешествия');
                     btn.disabled = false;
                     return;
                 }
 
+                console.log('Маршрутные точки:', routePoints_data.map(p => p.name));
+
                 document.getElementById('legsContainer').innerHTML = '<div style="text-align:center; padding:20px;">⏳ Построение автомобильного маршрута...</div>';
 
+                // Рисуем маршрут
                 const yandexDrawn = drawYandexRoute(routePoints_data);
                 
                 if (yandexDrawn) {
@@ -751,6 +764,7 @@
                     document.getElementById('apiNote').style.display = 'none';
                 }
                 
+                // Считаем расстояния
                 setTimeout(() => {
                     const result = calculateCarRoute(routePoints_data);
                     

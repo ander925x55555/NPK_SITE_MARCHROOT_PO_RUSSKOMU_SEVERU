@@ -29,9 +29,6 @@
             box-shadow: 0 6px 14px rgba(0,20,30,0.25);
             z-index: 100;
             flex-shrink: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         .header h1 {
             font-weight: 400;
@@ -44,21 +41,6 @@
         .header p {
             font-size: 0.95rem;
             opacity: 0.85;
-        }
-        .toggle-sidebar-btn {
-            background: #d4e3f5;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #1e4a6b;
-            cursor: pointer;
-            transition: 0.15s;
-            border: 1px solid #a0bedb;
-        }
-        .toggle-sidebar-btn:hover {
-            background: #b9d0e8;
         }
 
         .app-container {
@@ -74,10 +56,7 @@
             height: 100%;
             background: #c1d9e6;
             position: relative;
-            transition: flex 0.3s ease;
-        }
-        .map-wrapper.full {
-            flex: 1;
+            transition: all 0.3s ease;
         }
         #map {
             width: 100%;
@@ -99,10 +78,45 @@
         }
         .sidebar.collapsed {
             transform: translateX(100%);
+        }
+
+        /* Ненавязчивая стрелка для сворачивания */
+        .sidebar-toggle {
             position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 80px;
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-right: none;
+            border-radius: 20px 0 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+            z-index: 5;
+            transition: all 0.2s ease;
+            color: #1e4a6b;
+            font-size: 24px;
+        }
+        .sidebar-toggle:hover {
+            background: #e7f0f9;
+            width: 44px;
+            left: -44px;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.15);
+        }
+        .sidebar.collapsed + .sidebar-toggle {
+            left: -40px;
+            transform: translateY(-50%) rotate(180deg);
+            border-radius: 0 20px 20px 0;
+            border: 1px solid #cbd5e1;
+            border-left: none;
+        }
+        .sidebar.collapsed + .sidebar-toggle:hover {
+            left: -44px;
         }
 
         .info-card {
@@ -163,14 +177,6 @@
             font-size: 0.9rem;
             font-weight: 600;
             margin-left: 10px;
-        }
-        .water-badge {
-            background: #9bb7d4;
-            color: #083452;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-left: 8px;
         }
 
         .route-selector {
@@ -432,11 +438,8 @@
 </head>
 <body>
     <div class="header">
-        <div>
-            <h1>Автомобильное путешествие по <span>Северо-Западу России</span></h1>
-            <p>25 исторических точек · Кольцевой автопробег из Санкт-Петербурга</p>
-        </div>
-        <button class="toggle-sidebar-btn" id="toggleSidebarBtn">📌 Скрыть панель</button>
+        <h1>Автомобильное путешествие по <span>Северо-Западу России</span></h1>
+        <p>25 исторических точек · Кольцевой автопробег из Санкт-Петербурга</p>
     </div>
 
     <div class="app-container">
@@ -445,6 +448,9 @@
         </div>
 
         <div class="sidebar" id="sidebar">
+            <!-- Стрелка для сворачивания прямо на панели -->
+            <div class="sidebar-toggle" id="sidebarToggle">▶</div>
+            
             <div class="info-card" id="infoCard">
                 <h2 id="pointName">Санкт-Петербург</h2>
                 <div class="coords" id="pointCoords">59.9388, 30.3150</div>
@@ -538,18 +544,18 @@
             let sidebarCollapsed = false;
 
             // Функция сворачивания/разворачивания панели
-            document.getElementById('toggleSidebarBtn').addEventListener('click', function() {
-                const sidebar = document.getElementById('sidebar');
-                const btn = this;
-                
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            
+            toggleBtn.addEventListener('click', function() {
                 sidebarCollapsed = !sidebarCollapsed;
                 
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
-                    btn.innerHTML = '🗺️ Показать панель';
+                    toggleBtn.innerHTML = '◀'; // Стрелка вправо (показывает, что панель слева)
                 } else {
                     sidebar.classList.remove('collapsed');
-                    btn.innerHTML = '📌 Скрыть панель';
+                    toggleBtn.innerHTML = '▶'; // Стрелка влево (показывает, что можно свернуть)
                 }
                 
                 // Перерисовываем карту после анимации
@@ -563,26 +569,22 @@
                 document.getElementById('pointName').innerText = point.name;
                 document.getElementById('pointCoords').innerText = point.lat.toFixed(4) + ', ' + point.lon.toFixed(4);
                 
-                // Показываем полное описание без сокращений
                 const descElement = document.getElementById('pointDesc');
                 descElement.innerText = point.desc;
                 
-                // Добавляем информацию о типе точки
                 if (point.group === 'island') {
                     descElement.innerText += '\n\n🏝️ Островная точка — требуется водный транспорт (паром/катер).';
                 }
             }
 
-            // Заполнение чеклиста (все точки кроме СПб)
+            // Заполнение чеклиста
             function populateChecklist() {
                 const checklist = document.getElementById('checklist');
-                
-                // Все точки кроме стартовой (0)
                 const points_list = points.filter(p => p.id !== 0).sort((a, b) => a.id - b.id);
                 
                 checklist.innerHTML = '';
                 points_list.forEach(p => {
-                    const isIsland = (p.id === 20 || p.id === 21); // Кижи или Соловки
+                    const isIsland = (p.id === 20 || p.id === 21);
                     const islandBadge = isIsland ? '<span class="island-badge">остров</span>' : '';
                     
                     const row = document.createElement('div');
@@ -621,7 +623,7 @@
                 return "магистраль, отличное покрытие";
             }
 
-            // Расчёт расстояния по прямой
+            // Расчёт расстояния
             function haversineDistance(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -633,7 +635,7 @@
                 return R * c;
             }
 
-            // Расчёт автомобильного маршрута
+            // Расчёт маршрута
             function calculateCarRoute(routePoints) {
                 const legs = [];
                 let totalDistance = 0;
@@ -689,7 +691,7 @@
                 return { legs, totalDistance, totalTime };
             }
 
-            // Отрисовка маршрута на карте
+            // Отрисовка маршрута
             function drawYandexRoute(routePoints) {
                 if (!window.ymaps || !map) return false;
                 
@@ -793,13 +795,12 @@
                     controls: ['zoomControl', 'fullscreenControl']
                 });
 
-                // Добавляем все точки
                 points.forEach(p => {
                     let preset = 'islands#blueIcon';
                     
                     if (p.id === 0) {
-                        preset = 'islands#redIcon'; // СПб
-                    } else if (p.id === 20 || p.id === 21) { // Кижи и Соловки
+                        preset = 'islands#redIcon';
+                    } else if (p.id === 20 || p.id === 21) {
                         preset = 'islands#violetIcon';
                     } else {
                         preset = 'islands#greenIcon';
@@ -807,7 +808,6 @@
 
                     const placemark = new ymaps.Placemark([p.lat, p.lon], {
                         hintContent: p.name,
-                        // В балуне тоже показываем полный текст
                         balloonContent: `<strong>${p.name}</strong><br>${p.desc}`
                     }, { preset });
 

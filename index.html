@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Автомобильный маршрут: Северо-Запад + Соловки</title>
     <!-- Подключаем Яндекс Карты API -->
-    <script src="https://api-maps.yandex.ru/2.1/?apikey=6fd0f5ac-3b42-46cd-9fec-0fdc11dc5242&lang=ru_RU" type="text/javascript"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=ваш_ключ_api&lang=ru_RU" type="text/javascript"></script>
     <style>
         * {
             margin: 0;
@@ -80,42 +80,43 @@
             transform: translateX(100%);
         }
 
+        /* Стрелка для сворачивания - теперь с гарантированным отображением */
         .sidebar-toggle {
-            position: absolute;
-            left: -40px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 80px;
-            background: white;
-            border: 1px solid #cbd5e1;
-            border-right: none;
-            border-radius: 20px 0 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: -2px 0 8px rgba(0,0,0,0.1);
-            z-index: 5;
-            transition: all 0.2s ease;
-            color: #1e4a6b;
-            font-size: 24px;
+            position: absolute !important;
+            left: -40px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 40px !important;
+            height: 80px !important;
+            background: white !important;
+            border: 1px solid #cbd5e1 !important;
+            border-right: none !important;
+            border-radius: 20px 0 0 20px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.1) !important;
+            z-index: 1000 !important;
+            color: #1e4a6b !important;
+            font-size: 24px !important;
+            transition: all 0.2s ease !important;
         }
         .sidebar-toggle:hover {
-            background: #e7f0f9;
-            width: 44px;
-            left: -44px;
-            box-shadow: -4px 0 12px rgba(0,0,0,0.15);
+            background: #e7f0f9 !important;
+            width: 44px !important;
+            left: -44px !important;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.15) !important;
         }
         .sidebar.collapsed + .sidebar-toggle {
-            left: -40px;
-            transform: translateY(-50%) rotate(180deg);
-            border-radius: 0 20px 20px 0;
-            border: 1px solid #cbd5e1;
-            border-left: none;
+            left: -40px !important;
+            transform: translateY(-50%) rotate(180deg) !important;
+            border-radius: 0 20px 20px 0 !important;
+            border: 1px solid #cbd5e1 !important;
+            border-left: none !important;
         }
         .sidebar.collapsed + .sidebar-toggle:hover {
-            left: -44px;
+            left: -44px !important;
         }
 
         .info-card {
@@ -447,6 +448,7 @@
         </div>
 
         <div class="sidebar" id="sidebar">
+            <!-- Стрелка теперь находится ВНУТРИ панели, но позиционируется абсолютно -->
             <div class="sidebar-toggle" id="sidebarToggle">▶</div>
             
             <div class="info-card" id="infoCard">
@@ -541,24 +543,35 @@
             let currentRoute = null;
             let sidebarCollapsed = false;
 
-            // Функция сворачивания панели
-            const sidebar = document.getElementById('sidebar');
-            const toggleBtn = document.getElementById('sidebarToggle');
-            
-            toggleBtn.addEventListener('click', function() {
-                sidebarCollapsed = !sidebarCollapsed;
+            // Функция сворачивания панели - с гарантированной работой
+            document.addEventListener('DOMContentLoaded', function() {
+                const sidebar = document.getElementById('sidebar');
+                const toggleBtn = document.getElementById('sidebarToggle');
                 
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    toggleBtn.innerHTML = '◀';
+                if (toggleBtn) {
+                    console.log('Стрелка найдена, добавляем обработчик');
+                    
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        sidebarCollapsed = !sidebarCollapsed;
+                        
+                        if (sidebarCollapsed) {
+                            sidebar.classList.add('collapsed');
+                            toggleBtn.innerHTML = '◀';
+                        } else {
+                            sidebar.classList.remove('collapsed');
+                            toggleBtn.innerHTML = '▶';
+                        }
+                        
+                        setTimeout(() => {
+                            if (map) map.container.fitToViewport();
+                        }, 300);
+                    });
                 } else {
-                    sidebar.classList.remove('collapsed');
-                    toggleBtn.innerHTML = '▶';
+                    console.error('Стрелка не найдена!');
                 }
-                
-                setTimeout(() => {
-                    if (map) map.container.fitToViewport();
-                }, 300);
             });
 
             // Функция обновления информации о точке
